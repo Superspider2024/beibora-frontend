@@ -1,29 +1,26 @@
-import TopNav from "../../components/TopNav";
-
-export default function AboutPage() {
+export default function About() {
   return (
-    <>
-      <TopNav />
-      <div className="min-h-screen bg-gray-900 py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-black text-white mb-8 uppercase tracking-tight">The Beibora Mission</h1>
-          <div className="prose prose-lg text-gray-300 space-y-6">
-            <p className="font-bold text-[#32CD32] text-xl">
-              Beibora is not just an app; it is an infrastructure for trust.
-            </p>
-            <p>
-              We created the <strong className="text-white">Mavuno Protocol</strong> to solve the core problem of African agriculture: Information Asymmetry.
-              By combining local physical verification with digital escrow, we ensure that farmers get paid exactly what they deserve and buyers receive exactly what they paid for.
-            </p>
-            <h3 className="text-2xl font-bold text-white pt-6">The Triple-Check System</h3>
-            <ul className="list-disc pl-5 space-y-4 text-gray-300">
-              <li><strong className="text-white">The Mansart:</strong> Local agents who verify farmers and their initial inventory.</li>
-              <li><strong className="text-white">The Porter:</strong> Custodians who weigh and secure goods at the depot.</li>
-              <li><strong className="text-white">The Sargonne:</strong> High-volume market movers who provide the liquidity that keeps the engine running.</li>
-            </ul>
-          </div>
-        </div>
+    <div className="max-w-3xl mx-auto px-4 py-16 w-full">
+      <h1 className="text-4xl font-black tracking-tight mb-8">About Beibora</h1>
+      
+      <div className="space-y-8 text-gray-600 dark:text-gray-300 leading-relaxed">
+        <section>
+          <h2 className="text-2xl font-bold text-black dark:text-white mb-3">The Problem</h2>
+          <p>Traditional supply chains in Kenya are dominated by brokers who suppress farmer earnings while inflating retail prices in the city. The gap between the farm and the restaurant is broken.</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-black dark:text-white mb-3">The Protocol</h2>
+          <p>Beibora acts as a decentralized exchange. We source directly from Saccos and deliver directly to high-volume urban buyers. Using our proprietary verification system, goods are weighed and paid for instantly upon delivery.</p>
+        </section>
+
+        <section className="bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 mt-8">
+          <h2 className="text-xl font-bold text-black dark:text-white mb-2">The Sargonne Network</h2>
+          <p className="text-sm">
+            Beibora is powered by on-the-ground operators known as <strong>Sargonnes</strong>. They are the commanders of the city logistics, ensuring seamless handover and digital verification for every single transaction.
+          </p>
+        </section>
       </div>
-    </>
+    </div>
   );
 }

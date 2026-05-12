@@ -1,38 +1,14 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import TopNav from "@/components/TopNav";
 import "./globals.css";
-import BottomNav from "../components/BottomNav";
-import TopNav from "../components/TopNav";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "Beibora - Direct Trade Agricultural Exchange",
-  description: "Connecting small-scale farmers to buyers directly",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="en" className="antialiased">
+      <body className="bg-white text-black dark:bg-gray-950 dark:text-white min-h-screen flex flex-col transition-colors duration-300">
         <TopNav />
-        <main className="flex-1">{children}</main>
-        <BottomNav />
+        <main className="flex-1 flex flex-col">
+          {children}
+        </main>
       </body>
     </html>
   );
