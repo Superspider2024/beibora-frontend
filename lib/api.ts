@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // Your Live Railway Backend URL
-  baseURL: "https://agrilink.up.railway.app", 
+  baseURL: "https://beibora-production.up.railway.app/api", 
 });
 
 // This automatically attaches your security token to every request
