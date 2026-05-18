@@ -1,26 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, Truck, CheckCircle, CreditCard } from "lucide-react";
+import { Clock, CheckCircle } from "lucide-react";
 import api from "../../lib/api";
 
 interface Order {
-  _id: string;
-  product: {
-    name: string;
-    unit: string;
-  };
-  quantity: number;
-  totalPrice: number;
-  mpesaCode: string;
-  status: "pending" | "awaiting_verification" | "in_transit" | "delivered";
+  id: string;
+  orderNumber: string;
+  item: string;
+  qty: number;
+  total: number;
+  status: string;
   createdAt: string;
 }
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"orders" | "offers">("orders");
 
   useEffect(() => {
     fetchOrders();
@@ -29,111 +25,91 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       const response = await api.get('/orders');
-      setOrders(response.data);
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        const mapped = response.data.map((order: any) => ({
+          id: order._id,
+          orderNumber: order._id.slice(-6).toUpperCase(),
+          item: order.product?.name || order.item || 'Order item',
+          qty: order.quantity || order.qty || 1,
+          total: order.totalPrice || order.total || 0,
+          status: order.status || 'pending',
+          createdAt: order.createdAt || new Date().toISOString(),
+        }));
+        setOrders(mapped);
+      } else {
+        loadLocalOrders();
+      }
     } catch (error) {
       console.error('Failed to fetch orders', error);
+      loadLocalOrders();
     } finally {
       setLoading(false);
     }
   };
 
+  const loadLocalOrders = () => {
+    const local = JSON.parse(localStorage.getItem('beiboraOrders') || '[]');
+    if (Array.isArray(local)) {
+      setOrders(local);
+    } else {
+      setOrders([]);
+    }
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "pending": return <Clock size={24} className="text-orange-500" />;
-      case "awaiting_verification": return <CreditCard size={24} className="text-yellow-500" />;
-      case "in_transit": return <Truck size={24} className="text-blue-500" />;
-      case "delivered": return <CheckCircle size={24} className="text-[#32CD32]" />;
-      default: return <Clock size={24} className="text-gray-400" />;
+      case "pending":
+        return <Clock size={24} className="text-orange-500" />;
+      case "delivered":
+        return <CheckCircle size={24} className="text-[#32CD32]" />;
+      default:
+        return <Clock size={24} className="text-gray-400" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending": return "bg-orange-100 text-orange-800";
-      case "awaiting_verification": return "bg-yellow-100 text-yellow-800";
-      case "in_transit": return "bg-blue-100 text-blue-800";
-      case "delivered": return "bg-[#32CD32]/10 text-[#32CD32]";
-      default: return "bg-gray-100 text-gray-800";
+      case "pending":
+        return "bg-orange-100 text-orange-800";
+      case "delivered":
+        return "bg-[#32CD32]/10 text-[#32CD32]";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const filteredOrders = orders.filter(order => {
-    if (activeTab === "orders") {
-      return ["pending", "awaiting_verification", "in_transit", "delivered"].includes(order.status);
-    } else {
-      // For offers, show pending orders (bids/offers)
-      return order.status === "pending";
-    }
-  });
-
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-900">Loading...</div>;
   }
 
   return (
-    <main className="min-h-screen bg-gray-900 p-6 pb-24">
+    <main className="min-h-screen bg-gray-50 text-gray-900 p-6 pb-24">
       <header className="max-w-4xl mx-auto mb-12">
-        <h1 className="text-4xl font-black text-white mb-2">Orders</h1>
-        <p className="text-gray-300 text-lg">Track your purchases</p>
+        <h1 className="text-4xl font-black text-gray-900 mb-2">Orders</h1>
+        <p className="text-gray-600 text-lg">Track your purchases</p>
       </header>
-
-      {/* Tabs */}
-      <div className="max-w-4xl mx-auto mb-8 flex">
-        <button
-          onClick={() => setActiveTab("orders")}
-          className={`flex-1 py-4 px-6 rounded-3xl font-bold text-center transition-all ${
-            activeTab === "orders"
-              ? "bg-[#1A3636] text-white shadow-sm"
-              : "bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700"
-          }`}
-        >
-          Orders
-        </button>
-        <button
-          onClick={() => setActiveTab("offers")}
-          className={`flex-1 py-4 px-6 rounded-3xl font-bold text-center transition-all ml-4 ${
-            activeTab === "offers"
-              ? "bg-[#1A3636] text-white shadow-sm"
-              : "bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700"
-          }`}
-        >
-          Offers
-        </button>
-      </div>
 
       {/* Orders List */}
       <div className="max-w-4xl mx-auto space-y-6">
-        {filteredOrders.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-gray-400 text-lg font-medium">
-              {activeTab === "orders" ? "No orders found" : "No offers found"}
-            </div>
+        {orders.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-12 text-center">
+            <p className="text-gray-500 text-lg">No orders yet. Place your first order from the marketplace.</p>
           </div>
         ) : (
-          filteredOrders.map((order) => (
-            <div key={order._id} className="bg-gray-800 border border-gray-700 rounded-3xl p-8 shadow-sm">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center">
-                  {getStatusIcon(order.status)}
-                  <div className="ml-4">
-                    <h3 className="text-xl font-bold text-white">{order.product.name}</h3>
-                    <p className="text-gray-300">
-                      {order.quantity} {order.product.unit} • KES {order.totalPrice.toLocaleString()}
-                    </p>
-                  </div>
+          orders.map((order) => (
+            <div key={order.id} className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.2em] text-[#16a34a]">Order #{order.orderNumber}</p>
+                  <h2 className="text-2xl font-bold mt-2">{order.item}</h2>
+                  <p className="text-gray-600 mt-1">{order.qty} units • KES {order.total.toLocaleString()}</p>
                 </div>
-                <span className={`px-4 py-2 rounded-3xl text-sm font-bold ${getStatusColor(order.status)}`}>
-                  {order.status.replace("_", " ")}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-gray-400">
-                  <CreditCard size={18} className="mr-2" />
-                  <span className="font-medium">{order.mpesaCode}</span>
-                </div>
-                <div className="text-sm text-gray-500">
-                  {new Date(order.createdAt).toLocaleDateString()}
+                <div className="text-right">
+                  <span className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${getStatusColor(order.status)}`}>
+                    {getStatusIcon(order.status)}
+                    {order.status.replaceAll("_", " ")}
+                  </span>
+                  <p className="text-gray-500 text-sm mt-2">{new Date(order.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>
