@@ -14,14 +14,29 @@ export default function TopNav() {
     const token = localStorage.getItem("token"); // Replace with your actual auth check
     setIsLoggedIn(!!token);
 
-    if (document.documentElement.classList.contains("dark")) {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDark(true);
+    } else if (saved === 'light') {
+      document.documentElement.classList.remove('dark');
+      setIsDark(false);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
       setIsDark(true);
     }
   }, [pathname]);
 
   const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-    setIsDark(!isDark);
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   };
 
   const handleLogout = () => {
@@ -36,8 +51,11 @@ export default function TopNav() {
         
         {/* Left: Logo & Core Links */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="text-xl font-black tracking-tighter text-black dark:text-white">
-            BEIBORA
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#32CD32] rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-sm">AT</span>
+            </div>
+            <span className="text-xl font-black tracking-tighter text-[#32CD32]">Agricultural Trade</span>
           </Link>
           
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-500 dark:text-gray-400">

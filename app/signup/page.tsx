@@ -2,13 +2,28 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { User, Shield, Phone, MapPin, Lock, Mail, Type } from "lucide-react";
+import { User, Shield, Phone, MapPin, Lock, Mail, Type, Eye, EyeOff } from "lucide-react";
 import api from "../../lib/api";
 
 export default function SignupPage() {
   const [role, setRole] = useState<"buyer" | "admin">("buyer");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePhone = (phone: string) => {
+    // Expect local format starting with 07 and 10 digits total
+    return /^07\d{8}$/.test(phone);
+  };
+
+  const normalizePhone = (phone: string) => {
+    if (phone.startsWith('07')) return '+254' + phone.slice(1);
+    return phone;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,8 +31,28 @@ export default function SignupPage() {
     setError("");
 
     const formData = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
+    const payload: any = Object.fromEntries(formData.entries());
     payload.role = role;
+
+    // Client-side validation
+    if (!validateEmail(String(payload.email || ''))) {
+      setError('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+    if (String(payload.password || '').length < 6) {
+      setError('Password must be at least 6 characters');
+      setLoading(false);
+      return;
+    }
+    if (!validatePhone(String(payload.number || ''))) {
+      setError('Phone must start with 07 and be 10 digits long');
+      setLoading(false);
+      return;
+    }
+
+    // Normalize phone to +254 format
+    payload.number = normalizePhone(String(payload.number));
 
     try {
       const response = await api.post('/auth/register', payload);
@@ -109,12 +144,20 @@ export default function SignupPage() {
             <div className="relative">
               <Lock className="absolute left-4 top-4 text-gray-400" size={20} />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 required
                 placeholder="Password"
-                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
+                className="w-full pr-12 pl-12 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-400"
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
 
             <div className="relative">

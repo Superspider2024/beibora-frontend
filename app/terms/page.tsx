@@ -1,20 +1,21 @@
 export default function Terms() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-16 w-full">
-      <h1 className="text-4xl font-black tracking-tight mb-8">Terms of Service</h1>
-      
-      <div className="prose prose-gray dark:prose-invert max-w-none text-gray-600 dark:text-gray-300">
-        <p className="text-sm mb-8 text-gray-400">Last Updated: May 2026</p>
+    <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <section className="py-24 text-center">
+        <h1 className="text-4xl font-black mb-4">Terms of Service</h1>
+        <p className="text-sm text-gray-500">Last Updated: May 2026</p>
+      </section>
 
-        <h3 className="text-xl font-bold text-black dark:text-white mt-6 mb-2">1. Operating Protocol</h3>
-        <p>By using Beibora, you agree to adhere to the verification standards set by our platform. All weights must be verified upon delivery by an authorized Sargonne before digital escrow is cleared.</p>
+      <section className="max-w-4xl mx-auto px-4 py-8 prose prose-gray dark:prose-invert">
+        <h3>1. Operating Protocol</h3>
+        <p>All users agree to follow verification standards. We require physical verification at handover before funds are reconciled.</p>
 
-        <h3 className="text-xl font-bold text-black dark:text-white mt-6 mb-2">2. Financial Escrow</h3>
-        <p>Payments are facilitated via the Beibora Manual Protocol. Funds remain in transit until physical delivery is confirmed. Falsifying delivery states will result in immediate termination from the network.</p>
+        <h3>2. Financial Escrow</h3>
+        <p>Payments are tracked and only finalized after confirmation of delivery and inspection. Fraudulent activity may lead to account suspension.</p>
 
-        <h3 className="text-xl font-bold text-black dark:text-white mt-6 mb-2">3. Network Access</h3>
-        <p>We reserve the right to limit access to the marketplace based on supply and demand metrics to ensure operational stability.</p>
-      </div>
-    </div>
+        <h3>3. Network Access</h3>
+        <p>We may limit access or adjust service levels to maintain platform stability and fair operation across the network.</p>
+      </section>
+    </main>
   );
 }
