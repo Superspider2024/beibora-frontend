@@ -95,65 +95,61 @@ export default function SignupPage() {
               />
             </div>
 
-            {role === "buyer" ? (
-              <>
-                <div className="relative">
-                  <Phone className="absolute left-4 top-4 text-gray-400" size={20} />
-                  <input
-                    type="tel"
-                    name="number"
-                    required
-                    placeholder="Phone Number"
-                    className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-                  />
-                </div>
+            <div className="relative">
+              <Mail className="absolute left-4 top-4 text-gray-400" size={20} />
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="Email"
+                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
+              />
+            </div>
 
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-4 text-gray-400" size={20} />
-                  <input
-                    type="text"
-                    name="location"
-                    required
-                    placeholder="Location"
-                    className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-4 text-gray-400" size={20} />
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    placeholder="Email"
-                    className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-                  />
-                </div>
+            <div className="relative">
+              <Lock className="absolute left-4 top-4 text-gray-400" size={20} />
+              <input
+                type="password"
+                name="password"
+                required
+                placeholder="Password"
+                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
+              />
+            </div>
 
-                <div className="relative">
-                  <Lock className="absolute left-4 top-4 text-gray-400" size={20} />
-                  <input
-                    type="password"
-                    name="password"
-                    required
-                    placeholder="Password"
-                    className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-                  />
-                </div>
+            <div className="relative">
+              <Phone className="absolute left-4 top-4 text-gray-400" size={20} />
+              <input
+                type="tel"
+                name="number"
+                required
+                placeholder="Phone Number"
+                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
+              />
+            </div>
 
-                <div className="relative">
-                  <Shield className="absolute left-4 top-4 text-gray-400" size={20} />
-                  <input
-                    type="text"
-                    name="adminCode"
-                    required
-                    placeholder="Secret Admin Code"
-                    className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-                  />
-                </div>
-              </>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-4 text-gray-400" size={20} />
+              <input
+                type="text"
+                name="location"
+                required
+                placeholder="Location"
+                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
+              />
+            </div>
+
+            {role === "admin" && (
+              <div className="relative">
+                <Shield className="absolute left-4 top-4 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  name="adminCode"
+                  required
+                  placeholder="Secret Admin Code"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
+                />
+              </div>
             )}
           </div>
 
