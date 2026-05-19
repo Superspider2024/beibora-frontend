@@ -26,9 +26,10 @@ export default function Login() {
 
       if (res.ok) {
         localStorage.setItem('beibora_token', data.token);
+        if (data.role) localStorage.setItem('beibora_role', data.role);
         router.push('/marketplace');
       } else {
-        setError(data.msg || data.message || 'Authentication failed.');
+        setError(data.msg || data.message || (data.errors ? JSON.stringify(data.errors) : 'Authentication failed.'));
       }
     } catch (err) {
       setError('Connection to server failed.');
@@ -40,8 +41,8 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 shadow-lg">
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Sign In</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Sign in to your account</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Log In</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Log in to your account</p>
 
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
 
@@ -82,7 +83,7 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-lime-500 text-black font-semibold py-3 rounded-md hover:bg-lime-600 transition"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
