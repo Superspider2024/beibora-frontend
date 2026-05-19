@@ -1,27 +1,18 @@
 export default function About() {
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-      <section className="py-24 text-center">
-        <h1 className="text-5xl font-black text-[#32CD32] mb-6">About Agricultural Trade</h1>
-        <p className="max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-300">We are a mission-driven marketplace connecting verified smallholder farmers to urban buyers, improving income distribution and reducing waste across the supply chain.</p>
-      </section>
-
-      <section className="max-w-4xl mx-auto px-4 py-12 space-y-12">
-        <div>
-          <h2 className="text-2xl font-bold mb-3">The Challenge</h2>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Many farmers receive a fraction of the retail price due to opaque middlemen and inefficient logistics. Our platform addresses those failures with verification, cooperative partnerships, and transparent pricing.</p>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-bold mb-3">Our Approach</h2>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">We combine field verification, cooperative sourcing, and manual escrow reconciliation to guarantee quality and timely payment. Operators in our network handle verification and secure transfer on the ground.</p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700">
-          <h3 className="text-xl font-bold mb-2">The Field Network</h3>
-          <p className="text-gray-600 dark:text-gray-300">Local depots and operators ensure goods are inspected, weighed and handed off with digital receipts — creating trust between farmer and buyer.</p>
-        </div>
-      </section>
-    </main>
+    <div className="min-h-screen bg-gray-50 p-8 md:p-16 text-gray-900 font-sans">
+      <div className="max-w-4xl mx-auto bg-white border border-gray-300 p-10 shadow-sm">
+        <h1 className="text-3xl font-black tracking-tighter uppercase mb-6 border-b border-gray-200 pb-4">Infrastructure Overview</h1>
+        <p className="text-sm leading-relaxed mb-6 font-mono text-gray-600">
+          Beibora operates a two-sided logistics network designed to eliminate informal brokerage inefficiency. 
+          By utilizing centralized unit-drops and enforcing strict platform take-rates, we guarantee optimized landed costs for urban buyers and protected farm-gate pricing for cooperatives.
+        </p>
+        <h2 className="text-sm font-bold uppercase tracking-wider mt-8 mb-4">Node Classifications</h2>
+        <ul className="list-inside space-y-4 text-sm text-gray-700 font-mono">
+          <li><strong className="text-black uppercase">Mansart:</strong> Supply-side acquisition. Manages cooperative onboarding and initial payload verification.</li>
+          <li><strong className="text-black uppercase">Sargonne:</strong> Demand-side aggregation. Bundles informal market buyers into guaranteed 10,000 Ksh physical drop units.</li>
+        </ul>
+      </div>
+    </div>
   );
 }

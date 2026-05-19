@@ -1,136 +1,97 @@
+// app/marketplace/page.tsx
 "use client";
 import { useState } from "react";
 
-interface InventoryItem {
-  id: number;
-  sacco: string;
-  item: string;
-  qty: string;
-  price: number;
-  image: string;
-  description: string;
-  unit: string;
-}
+// Mock Data structured for the operational reality
+const initialListings = [
+  { id: "L-001", coop: "Murang'a Farmers Sacco", commodity: "Tomatoes", available_kg: 500, farm_price: 40, transport_kg: 5 },
+  { id: "L-002", coop: "Naivasha Green Coop", commodity: "Cabbage", available_kg: 800, farm_price: 25, transport_kg: 6 },
+  { id: "L-003", coop: "Kinangop Harvest", commodity: "Onions", available_kg: 1200, farm_price: 60, transport_kg: 4 },
+];
 
-export default function Marketplace() {
-  const [stock] = useState<InventoryItem[]>([
-    {
-      id: 1,
-      sacco: "Murang'a Alpha",
-      item: "Hass Avocados",
-      qty: "50 Crates",
-      price: 3200,
-      unit: "crate",
-      image: "https://images.unsplash.com/photo-1519923043675-9b298c32d4f9?auto=format&fit=crop&w=900&q=80",
-      description: "Creamy, farm-fresh Hass avocados direct from Murang'a.",
-    },
-    {
-      id: 2,
-      sacco: "Kiambu Central",
-      item: "Red Onions",
-      qty: "120 Nets",
-      price: 1800,
-      unit: "net",
-      image: "https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=900&q=80",
-      description: "Crisp red onions from certified growers around Kiambu.",
-    },
-    {
-      id: 3,
-      sacco: "Mwea Valley",
-      item: "Broken Rice",
-      qty: "80 Bags",
-      price: 2400,
-      unit: "bag",
-      image: "https://images.unsplash.com/photo-1496080174650-637e3f22fa03?auto=format&fit=crop&w=900&q=80",
-      description: "Clean, ready-to-sell rice from Mwea irrigation farms.",
-    },
-  ]);
-  const [quantities, setQuantities] = useState<Record<number, number>>({});
-  const [message, setMessage] = useState<string | null>(null);
+export default function SargonneTerminal() {
+  const [unitTotal, setUnitTotal] = useState(0);
+  const PLATFORM_TAKE_RATE = 0.08; 
 
-  const handleQuantity = (id: number, value: string) => {
-    const number = Math.max(1, Number(value) || 1);
-    setQuantities((current) => ({ ...current, [id]: number }));
+  const calculateLandedPrice = (farmPrice: number, transport: number) => {
+    // Incorporating the compound pricing logic
+    const baseSubtotal = farmPrice + transport; 
+    return Math.ceil(baseSubtotal * (1 + PLATFORM_TAKE_RATE));
   };
 
-  const placeOrder = (item: InventoryItem) => {
-    const qty = quantities[item.id] || 1;
-    const orderNumber = `AT-${Math.floor(1000 + Math.random() * 9000)}`;
-    const order = {
-      id: `${Date.now()}-${item.id}`,
-      orderNumber,
-      item: item.item,
-      qty,
-      total: item.price * qty,
-      status: "pending",
-      createdAt: new Date().toISOString(),
-    };
-
-    const existing = JSON.parse(localStorage.getItem("beiboraOrders") || "[]");
-    localStorage.setItem("beiboraOrders", JSON.stringify([order, ...existing]));
-    setMessage(`Order ${orderNumber} placed for ${qty} ${item.item}.`);
-    setQuantities((current) => ({ ...current, [item.id]: 1 }));
+  const addToUnit = (price: number, kg: number) => {
+    setUnitTotal(prev => prev + (price * kg));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-black selection:text-white">
-      <header className="bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-6xl mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">Marketplace</h1>
-            <p className="text-gray-600 mt-1">Direct from farm. Good quality, cheaper.</p>
-          </div>
-          <div className="rounded-full bg-[#e8f8f0] px-4 py-2 text-sm font-semibold text-[#15803d]">
-            Order direct from producer
-          </div>
+    <div className="min-h-screen bg-gray-50 p-6 text-gray-900 font-sans">
+      <header className="mb-8 border-b border-gray-300 pb-4 flex justify-between items-end">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-black">BEIBORA EXCHANGE</h1>
+          <p className="text-xs text-gray-500 uppercase tracking-widest mt-1">Sargonne Routing Terminal</p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-gray-500 uppercase tracking-widest">Active Unit Bundle</p>
+          <p className={`text-3xl font-mono font-bold ${unitTotal >= 10000 ? 'text-green-600' : 'text-red-600'}`}>
+            Ksh {unitTotal.toLocaleString()}
+          </p>
+          <p className="text-xs text-gray-400 font-mono">Floor: 10,000 Ksh</p>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-10">
-        {message && (
-          <div className="mb-6 rounded-3xl bg-[#e6fffa] border border-[#bde5d7] px-6 py-4 text-[#065f46] shadow-sm">
-            {message}
-          </div>
-        )}
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          {stock.map((item) => (
-            <div key={item.id} className="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div className="h-56 overflow-hidden">
-                <img src={item.image} alt={item.item} className="h-full w-full object-cover" />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#16a34a] bg-[#dcfce7] px-3 py-1 rounded-full">Verified</span>
-                  <span className="text-sm text-gray-500">{item.sacco}</span>
-                </div>
-                <h2 className="text-2xl font-bold tracking-tight mb-2">{item.item}</h2>
-                <p className="text-gray-600 mb-4">{item.description}</p>
-                <div className="flex items-center justify-between gap-4 mb-6">
-                  <div>
-                    <p className="text-3xl font-black text-[#16a34a]">KES {item.price}</p>
-                    <p className="text-sm text-gray-500 mt-1">{item.qty} available</p>
-                  </div>
-                  <div className="text-right text-sm text-gray-500">{item.unit}</div>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <input
-                    type="number"
-                    min="1"
-                    value={quantities[item.id] || 1}
-                    onChange={(e) => handleQuantity(item.id, e.target.value)}
-                    className="w-full sm:w-32 rounded-3xl border border-gray-300 px-4 py-3 text-gray-900 outline-none focus:border-[#32CD32] transition-colors"
-                  />
-                  <button
-                    onClick={() => placeOrder(item)}
-                    className="w-full sm:w-auto rounded-3xl bg-[#32CD32] px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-500 transition-colors"
-                  >
-                    Order
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+      <main>
+        <div className="overflow-x-auto border border-gray-300 bg-white shadow-sm">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-gray-100 uppercase tracking-wider text-xs font-semibold text-gray-600 border-b border-gray-300">
+              <tr>
+                <th className="p-4">Dispatch ID</th>
+                <th className="p-4">Co-Operative</th>
+                <th className="p-4">Commodity</th>
+                <th className="p-4 text-right">Avail (KG)</th>
+                <th className="p-4 text-right bg-gray-50 border-l border-gray-200">Farm/KG</th>
+                <th className="p-4 text-right bg-gray-50">LTL/KG</th>
+                <th className="p-4 text-right bg-yellow-50 border-l border-gray-200 font-bold">Landed/KG</th>
+                <th className="p-4 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {initialListings.map((item) => {
+                const landedPrice = calculateLandedPrice(item.farm_price, item.transport_kg);
+                return (
+                  <tr key={item.id} className="hover:bg-blue-50 transition-colors">
+                    <td className="p-4 font-mono text-xs text-gray-500">{item.id}</td>
+                    <td className="p-4 font-medium">{item.coop}</td>
+                    <td className="p-4 font-medium">{item.commodity}</td>
+                    <td className="p-4 font-mono text-right">{item.available_kg}</td>
+                    <td className="p-4 text-right bg-gray-50 border-l border-gray-200 font-mono">Ksh {item.farm_price}</td>
+                    <td className="p-4 text-right bg-gray-50 font-mono text-red-600">Ksh {item.transport_kg}</td>
+                    <td className="p-4 text-right bg-yellow-50 border-l border-gray-200 font-mono font-bold text-black">
+                      Ksh {landedPrice}
+                    </td>
+                    <td className="p-4 text-center">
+                      <button 
+                        onClick={() => addToUnit(landedPrice, 50)} 
+                        className="bg-black text-white text-xs px-4 py-2 uppercase font-bold tracking-wide hover:bg-gray-800 transition-colors"
+                      >
+                        Add 50 KG
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        
+        <div className="mt-8 flex justify-end">
+          <button 
+            disabled={unitTotal < 10000}
+            className={`px-8 py-4 text-sm uppercase tracking-widest font-bold text-white transition-colors ${
+              unitTotal >= 10000 ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'
+            }`}
+          >
+            {unitTotal >= 10000 ? 'Lock Unit & Dispatch Lorry' : 'Unit Floor Not Met'}
+          </button>
         </div>
       </main>
     </div>

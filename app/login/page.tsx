@@ -6,6 +6,7 @@ import { Lock, Mail, Shield, Eye, EyeOff } from "lucide-react";
 import api from "../../lib/api";
 
 export default function LoginPage() {
+  const [role, setRole] = useState<"buyer" | "admin">("buyer");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +21,8 @@ export default function LoginPage() {
     setError("");
 
     const formData = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
+    const payload: any = Object.fromEntries(formData.entries());
+    payload.role = role;
 
     if (!validateEmail(String(payload.email || '')) ) {
       setError('Please enter a valid email address');
@@ -52,6 +54,34 @@ export default function LoginPage() {
         <div className="bg-[#1A3636] p-8 text-center text-white">
           <h1 className="text-3xl font-black mb-2">Welcome Back</h1>
           <p className="text-gray-300 text-sm">Access the Beibora Protocol</p>
+        </div>
+
+        {/* Role Toggle */}
+        <div className="p-6 bg-gray-750 border-b border-gray-700">
+          <div className="flex bg-gray-700 rounded-3xl p-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setRole("buyer")}
+              className={`flex-1 py-3 px-4 rounded-2xl font-semibold transition-all text-sm ${
+                role === "buyer"
+                  ? "bg-[#32CD32] text-gray-900 shadow-sm"
+                  : "text-gray-300 hover:text-white"
+              }`}
+            >
+              Buyer
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("admin")}
+              className={`flex-1 py-3 px-4 rounded-2xl font-semibold transition-all text-sm ${
+                role === "admin"
+                  ? "bg-[#32CD32] text-gray-900 shadow-sm"
+                  : "text-gray-300 hover:text-white"
+              }`}
+            >
+              Admin
+            </button>
+          </div>
         </div>
 
         {/* Form */}

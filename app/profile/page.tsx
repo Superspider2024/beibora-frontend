@@ -1,125 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { User, MapPin, Phone, Mail, LogOut } from "lucide-react";
-
-interface UserProfile {
-  name: string;
-  email: string;
-  number: string;
-  location: string;
-  role: string;
-}
-
-export default function ProfilePage() {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch user profile from JWT token in localStorage
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        // Decode JWT to get user info
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        const decoded = JSON.parse(jsonPayload);
-        
-        // Set user data from token (limited info)
-        setUser({
-          name: "User",
-          email: "user@beibora.app",
-          number: "+254700000000",
-          location: "Kenya",
-          role: decoded.user.role
-        });
-      } catch (error) {
-        console.error('Failed to decode token', error);
-      }
-    }
-    setLoading(false);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/';
-  };
-
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-900">Loading...</div>;
-  }
-
-  if (!user) {
-    return (
-      <main className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
-        <div className="text-center">
-          <p className="text-white text-xl mb-4">Please log in to view your profile</p>
-          <Link href="/login" className="text-[#32CD32] font-bold hover:underline">
-            Go to Login
-          </Link>
-        </div>
-      </main>
-    );
-  }
-
+export default function ProfileTerminal() {
   return (
-    <main className="min-h-screen bg-gray-900 p-6 pb-24">
-      <header className="max-w-4xl mx-auto mb-12">
-        <h1 className="text-4xl font-black text-white mb-2">Profile</h1>
-        <p className="text-gray-300 text-lg">Your account details</p>
+    <div className="min-h-screen bg-gray-50 p-6 text-gray-900 font-sans pb-24">
+      <header className="mb-8 border-b border-gray-300 pb-4">
+        <h1 className="text-2xl font-bold tracking-tight text-black">OPERATOR METRICS</h1>
+        <p className="text-xs text-gray-500 uppercase tracking-widest mt-1">Identity & Protocol Stats</p>
       </header>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-gray-800 border border-gray-700 rounded-3xl p-8 shadow-sm">
-          <div className="flex items-center mb-8">
-            <div className="w-20 h-20 bg-[#1A3636] rounded-3xl flex items-center justify-center mr-6">
-              <User size={32} className="text-white" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white border border-gray-300 shadow-sm">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-black bg-gray-100 p-4 border-b border-gray-300">Clearance Credentials</h2>
+            <div className="p-6 space-y-4 font-mono text-sm">
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Operator ID:</span> <span>SGN-8942</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Classification:</span> <span>Sargonne Node</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Primary Zone:</span> <span>Nairobi CBD</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Status:</span> <span className="text-green-600">Active / Verified</span></div>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white">{user.name}</h2>
-              <p className="text-gray-300 capitalize">{user.role}</p>
+        </div>
+        
+        <div className="bg-white border border-gray-300 shadow-sm">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-black bg-gray-100 p-4 border-b border-gray-300">Aggregated Performance</h2>
+            <div className="p-6 space-y-4 font-mono text-sm">
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Units Bundled (MTD):</span> <span>42</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Total GMV Cleared:</span> <span>420,000 Ksh</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Node Comm. Earned:</span> <span className="text-green-600">21,000 Ksh</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-gray-500">Drop-off Dispute Rate:</span> <span className="text-red-600">2.1%</span></div>
             </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="flex items-center p-6 bg-gray-700 rounded-3xl border border-gray-600">
-              <Mail size={20} className="text-gray-400 mr-4" />
-              <div>
-                <p className="text-sm text-gray-300 font-medium">Email</p>
-                <p className="font-bold text-white">{user.email}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center p-6 bg-gray-700 rounded-3xl border border-gray-600">
-              <Phone size={20} className="text-gray-400 mr-4" />
-              <div>
-                <p className="text-sm text-gray-300 font-medium">Phone Number</p>
-                <p className="font-bold text-white">{user.number}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center p-6 bg-gray-700 rounded-3xl border border-gray-600">
-              <MapPin size={20} className="text-gray-400 mr-4" />
-              <div>
-                <p className="text-sm text-gray-300 font-medium">Location</p>
-                <p className="font-bold text-white">{user.location}</p>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            className="w-full mt-8 bg-red-500 text-white py-4 rounded-3xl font-bold hover:bg-red-600 transition-colors shadow-sm flex items-center justify-center gap-2"
-          >
-            <LogOut size={20} />
-            Logout
-          </button>
         </div>
       </div>
-    </main>
-  );
+    </div>
+  )
 }
