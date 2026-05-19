@@ -9,7 +9,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   // We check for 'window' so Next.js doesn't crash during server rendering
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("beibora_token");
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }

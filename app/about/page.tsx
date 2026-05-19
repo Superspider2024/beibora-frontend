@@ -2,14 +2,14 @@
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-[#202124] p-6 md:p-12 text-gray-300 font-sans selection:bg-lime-400 selection:text-black">
-      <div className="max-w-4xl mx-auto bg-[#171717] border border-gray-800 shadow-2xl p-10">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 md:p-12 text-gray-700 dark:text-gray-200 font-sans selection:bg-accent selection:text-black">
+      <div className="max-w-4xl mx-auto card p-10">
         
         <header className="mb-10 border-b border-gray-800 pb-6">
-          <h1 className="text-4xl font-black tracking-tighter uppercase text-white mb-4">
-            Protocol Overview
+          <h1 className="text-4xl font-semibold tracking-tight mb-4 text-gray-900 dark:text-gray-100">
+            Overview
           </h1>
-          <p className="text-sm font-mono text-lime-400 uppercase tracking-widest">
+          <p className="text-sm text-accent uppercase tracking-widest">
             Beibora Agricultural Exchange: Institutional Logistics
           </p>
         </header>
@@ -34,18 +34,13 @@ export default function About() {
           </section>
 
           <section>
-            <h3 className="text-white font-bold uppercase mb-4 text-sm tracking-widest">Node Architecture</h3>
+            <h3 className="text-gray-900 dark:text-gray-100 font-semibold mb-4 text-sm">Operations</h3>
             <p className="mb-4">
-              The Beibora ecosystem is powered by two distinct, specialized operational nodes. The 
-              <span className="text-lime-400 font-bold"> Mansart Node</span> manages the supply-side integration. 
-              These operators are embedded within local cooperatives, ensuring that the produce entering 
-              our system meets rigorous quality standards before it ever hits a lorry.
+              The Beibora ecosystem is structured around two specialized operator roles. The
+              <span className="text-accent font-semibold"> Mansart</span> role manages supply-side integration—working with local cooperatives to ensure produce quality before transport.
             </p>
             <p>
-              The <span className="text-lime-400 font-bold"> Sargonne Node</span> manages demand aggregation. 
-              Operating in urban trade hubs, these nodes bundle thousands of fragmented micro-purchases 
-              from informal vendors into optimized 10,000 Ksh physical units. This centralizes logistics, 
-              dramatically reducing the last-mile complexity and costs that plague traditional brokers.
+              The <span className="text-accent font-semibold"> Sargonne</span> role focuses on demand aggregation in urban trade hubs, bundling micro-purchases into efficient shipments to reduce last-mile costs.
             </p>
           </section>
 
@@ -65,8 +60,8 @@ export default function About() {
             </p>
           </section>
 
-          <footer className="pt-10 mt-10 border-t border-gray-800 text-gray-600 text-xs font-mono">
-            <p className="uppercase tracking-widest mb-2 text-lime-400">HQ Terminal: Nairobi, Kenya</p>
+          <footer className="pt-10 mt-10 border-t border-gray-100 dark:border-gray-800 text-gray-600 text-sm">
+            <p className="uppercase tracking-widest mb-2 text-accent">HQ Office: Nairobi, Kenya</p>
             <p>Dispatch Line: 0722721923</p>
             <p>Inquiry: beibora@gmail.com</p>
           </footer>

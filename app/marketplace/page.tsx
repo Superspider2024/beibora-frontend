@@ -39,7 +39,7 @@ export default function TerminalCommandCenter() {
   };
 
   return (
-    <div className="min-h-screen bg-[#202124] p-6 text-white font-mono pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 text-gray-900 dark:text-gray-100 font-sans pb-24">
       {/* Tab Header */}
       <div className="flex gap-4 mb-8">
         <button 
@@ -60,16 +60,16 @@ export default function TerminalCommandCenter() {
       {activeTab === 'market' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {products.map((p: any) => (
-            <div key={p._id} className="bg-[#171717] border border-gray-800 p-6 flex flex-col justify-between">
+            <div key={p._id} className="card p-6 flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-white mb-1">{p.name}</h3>
-                <p className="text-lime-400 text-sm font-bold mb-4">{p.price} Ksh</p>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{p.name}</h3>
+                <p className="text-accent text-sm font-semibold mb-4">{p.price} Ksh</p>
               </div>
               <button 
                 onClick={() => handleOrder(p._id)}
-                className="w-full bg-lime-400 text-black font-black uppercase text-xs py-3 hover:bg-lime-500 transition-colors"
+                className="w-full bg-lime-500 text-black font-semibold uppercase text-sm py-3 rounded-md hover:bg-lime-600 transition"
               >
-                Order (STK Push)
+                Order
               </button>
             </div>
           ))}

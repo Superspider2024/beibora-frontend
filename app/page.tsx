@@ -10,7 +10,7 @@ const DUMMY_GOODS = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#202124] text-white font-sans flex flex-col selection:bg-lime-400 selection:text-black">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans flex flex-col selection:bg-lime-400 selection:text-black">
       
       {/* Hero Section */}
       <main className="flex-grow flex flex-col justify-center items-center p-6 pt-24 pb-20">
@@ -18,8 +18,8 @@ export default function Home() {
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase text-white">
             Beibora <span className="text-lime-400">Exchange</span>
           </h1>
-          <p className="text-lg md:text-2xl text-gray-400 font-medium max-w-3xl mx-auto">
-            Direct from the soil to your stall. Connecting Kenya's farmers directly to you with zero hidden broker fees.
+          <p className="text-lg md:text-2xl text-gray-600 dark:text-gray-300 font-medium max-w-3xl mx-auto">
+            Direct from the farm to your stall. Connecting Kenya's farmers to buyers with transparent pricing.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8 items-center">
             <Link 
@@ -56,19 +56,19 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {DUMMY_GOODS.map((good) => (
-              <div key={good.id} className="bg-[#202124] border border-gray-800 p-6 hover:border-lime-400 transition-colors cursor-default group">
+              <div key={good.id} className="card p-6 hover:shadow-xl transition-colors cursor-default group">
                 <div className="flex justify-between items-start mb-6">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500">{good.type}</span>
-                  <span className="bg-lime-400/10 text-lime-400 text-[10px] px-2 py-1 uppercase font-bold tracking-wider group-hover:bg-lime-400 group-hover:text-black transition-colors">
+                  <span className="text-xs font-semibold tracking-wider text-gray-500">{good.type}</span>
+                  <span className="bg-accent/10 text-accent text-[10px] px-2 py-1 uppercase font-semibold tracking-wider transition-colors">
                     Direct
                   </span>
                 </div>
-                <h3 className="font-bold text-lg mb-2 text-gray-100">{good.name}</h3>
-                <p className="text-2xl font-mono text-white mb-6">{good.price}</p>
-                <div className="flex justify-between items-center text-xs text-gray-500 font-mono border-t border-gray-800 pt-4">
-                  <span>Vol: <span className="text-gray-300">{good.weight}</span></span>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-gray-100">{good.name}</h3>
+                <p className="text-2xl font-mono text-gray-900 dark:text-gray-100 mb-6">{good.price}</p>
+                <div className="flex justify-between items-center text-xs text-gray-500 font-mono border-t border-gray-100 dark:border-gray-800 pt-4">
+                  <span>Vol: <span className="text-gray-600 dark:text-gray-300">{good.weight}</span></span>
                   <span className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-lime-400 animate-pulse"></div>
+                    <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
                     Verified
                   </span>
                 </div>
@@ -82,22 +82,22 @@ export default function Home() {
       <footer className="bg-[#0a0a0a] py-16 text-center md:text-left">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
           <div>
-            <h3 className="text-2xl font-black uppercase tracking-tighter text-white mb-3">Beibora</h3>
-            <p className="text-sm text-gray-500 font-mono max-w-xs mx-auto md:mx-0">
-              The decentralized B2B agricultural logistics terminal.
+            <h3 className="text-2xl font-semibold tracking-tighter text-gray-900 dark:text-gray-100 mb-3">Beibora</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-xs mx-auto md:mx-0">
+              The decentralized B2B agricultural marketplace.
             </p>
           </div>
           
           <div className="font-mono text-sm text-gray-400 space-y-3">
-            <p className="uppercase text-xs font-bold tracking-widest text-gray-600 mb-5">Contact Protocol</p>
+            <p className="uppercase text-xs font-bold tracking-widest text-gray-600 mb-5">Contact</p>
             <p>Email: <a href="mailto:beibora@gmail.com" className="text-lime-400 hover:underline">beibora@gmail.com</a></p>
             <p>Dispatch: <span className="text-lime-400">0722721923</span></p>
           </div>
           
           <div className="font-mono text-sm text-gray-400 md:text-right space-y-3">
              <p className="uppercase text-xs font-bold tracking-widest text-gray-600 mb-5">Operations Base</p>
-             <p className="text-white">Nairobi, Kenya</p>
-             <p>HQ Terminal</p>
+             <p className="text-gray-900 dark:text-gray-100">Nairobi, Kenya</p>
+             <p>HQ Office</p>
           </div>
         </div>
       </footer>
