@@ -5,9 +5,10 @@ import Link from 'next/link';
 
 export default function Signup() {
   const router = useRouter();
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'Sargonne' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'buyer', number: '', location: '', adminCode: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,60 +25,105 @@ export default function Signup() {
       const data = await res.json();
 
       if (res.ok) {
-        // Success: Redirect to Marketplace
         router.push('/marketplace');
       } else {
-        setError(data.message || 'Registration failed. Check Node ID.');
+        setError(data.msg || data.message || 'Registration failed.');
       }
     } catch (err) {
-      setError('Connection to backend failed. Check server status.');
+      setError('Connection to backend failed.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#202124] flex items-center justify-center p-6 font-mono">
-      <div className="w-full max-w-sm bg-[#171717] border border-gray-800 p-8 shadow-2xl">
-        <h2 className="text-xl font-black text-white uppercase tracking-tighter mb-2">Initialize Node</h2>
-        <p className="text-[10px] text-gray-500 mb-8 uppercase tracking-widest">Connect to Beibora Protocol</p>
-        
-        {error && <p className="text-[10px] text-red-500 mb-4 uppercase">{error}</p>}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 shadow-lg">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Sign Up</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Create a new account</p>
+
+        {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
 
         <form onSubmit={handleSignup} className="space-y-4">
-          <input 
-            type="text" placeholder="Full Name" 
-            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
+          <input
+            type="text"
+            placeholder="Full name"
+            className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-lime-300 outline-none"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
           />
-          <input 
-            type="email" placeholder="Email / Identifier" 
-            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
+
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-lime-300 outline-none"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            required
           />
-          <input 
-            type="password" placeholder="Passkey" 
-            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
-            onChange={(e) => setFormData({...formData, password: e.target.value})}
+
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-lime-300 outline-none"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required
+            />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password" className="absolute right-2 top-2 text-gray-500">
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
+          <input
+            type="tel"
+            placeholder="Phone number"
+            className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-lime-300 outline-none"
+            value={formData.number}
+            onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+            required
           />
-          <select 
-            className="w-full bg-[#202124] text-gray-400 p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
-            onChange={(e) => setFormData({...formData, role: e.target.value})}
+
+          <input
+            type="text"
+            placeholder="Location (city/region)"
+            className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-lime-300 outline-none"
+            value={formData.location}
+            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+            required
+          />
+
+          <select
+            value={formData.role}
+            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+            className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-lime-300 outline-none"
           >
-            <option>Sargonne</option>
-            <option>Mansart</option>
+            <option value="buyer">User</option>
+            <option value="admin">Admin</option>
           </select>
 
-          <button 
+          {formData.role === 'admin' && (
+            <input
+              type="text"
+              placeholder="Admin code"
+              className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-lime-300 outline-none"
+              value={formData.adminCode}
+              onChange={(e) => setFormData({ ...formData, adminCode: e.target.value })}
+            />
+          )}
+
+          <button
             disabled={loading}
-            className="w-full bg-lime-400 text-black font-black py-3 uppercase tracking-widest hover:bg-lime-500 transition disabled:bg-gray-600"
+            className="w-full bg-lime-500 text-black font-semibold py-3 rounded-md hover:bg-lime-600 transition"
           >
-            {loading ? 'Initializing...' : 'Register Node'}
+            {loading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
 
-        <p className="mt-6 text-[10px] text-gray-600 text-center uppercase tracking-widest">
-          Already have access? <Link href="/login" className="text-lime-400 hover:underline">Log in</Link>
+        <p className="mt-6 text-sm text-gray-600 dark:text-gray-400 text-center">
+          Already registered? <Link href="/login" className="text-lime-500 font-medium">Sign in</Link>
         </p>
       </div>
     </div>
