@@ -1,31 +1,80 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 
 export default function AdminTerminal() {
-  const [activeTab, setActiveTab] = useState('orders');
+  const [activeTab, setActiveTab] = useState('offers');
+  const [data, setData] = useState({ offers: [], farmers: [] });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch data from your Railway backend
+    const fetchData = async () => {
+      try {
+        const [offersRes, farmersRes] = await Promise.all([
+          fetch('https://beibora-production.up.railway.app/api/products'),
+          fetch('https://beibora-production.up.railway.app/api/user/farmers')
+        ]);
+        const offers = await offersRes.json();
+        const farmers = await farmersRes.json();
+        setData({ offers, farmers });
+      } catch (err) {
+        console.error("Failed to sync with terminal backend");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
-    <div className="bg-white min-h-screen p-8 text-black font-mono">
-      <div className="flex gap-8 mb-8 border-b pb-4">
-        <button onClick={() => setActiveTab('orders')} className={`text-sm uppercase font-bold ${activeTab === 'orders' ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}>Upcoming Orders</button>
-        <button onClick={() => setActiveTab('accounts')} className={`text-sm uppercase font-bold ${activeTab === 'accounts' ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}>Node Accounts</button>
+    <div className="min-h-screen bg-[#202124] p-6 text-white font-mono pb-24">
+      <header className="mb-8 border-b border-gray-800 pb-4">
+        <h1 className="text-xl font-black uppercase tracking-tighter text-white">System Admin</h1>
+        <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Centralized Node Administration</p>
+      </header>
+
+      {/* Tabs */}
+      <div className="flex gap-4 mb-8">
+        <button 
+          onClick={() => setActiveTab('offers')} 
+          className={`text-[10px] font-black uppercase tracking-widest px-6 py-2 border ${activeTab === 'offers' ? 'bg-lime-400 text-black border-lime-400' : 'bg-transparent text-gray-500 border-gray-700 hover:text-white'}`}
+        >
+          Commodity Offers
+        </button>
+        <button 
+          onClick={() => setActiveTab('farmers')} 
+          className={`text-[10px] font-black uppercase tracking-widest px-6 py-2 border ${activeTab === 'farmers' ? 'bg-lime-400 text-black border-lime-400' : 'bg-transparent text-gray-500 border-gray-700 hover:text-white'}`}
+        >
+          Co-op Nodes
+        </button>
       </div>
 
-      {activeTab === 'orders' ? (
-        <section>
-          <div className="grid grid-cols-4 gap-4 text-xs uppercase text-gray-500 mb-4">
-            <div>Order ID</div><div>Commodity</div><div>Volume</div><div>Status</div>
-          </div>
-          {/* Order Rows Here */}
-        </section>
-      ) : (
-        <section>
-          <div className="grid grid-cols-4 gap-4 text-xs uppercase text-gray-500 mb-4">
-            <div>Node ID</div><div>Managed By</div><div>Weekly GMV</div><div>Status</div>
-          </div>
-          {/* Account Rows Here */}
-        </section>
-      )}
+      {/* Content Area */}
+      <div className="bg-[#171717] border border-gray-800 p-6 shadow-2xl min-h-[400px]">
+        {loading ? (
+          <p className="text-xs text-lime-400 animate-pulse uppercase">Syncing with Protocol...</p>
+        ) : (
+          <table className="w-full text-left text-xs">
+            <thead className="text-gray-500 border-b border-gray-800 uppercase tracking-widest">
+              <tr>
+                <th className="pb-4">ID</th>
+                <th className="pb-4">{activeTab === 'offers' ? 'Item' : 'Sacco Name'}</th>
+                <th className="pb-4">Status</th>
+                <th className="pb-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-800">
+              {activeTab === 'offers' ? (
+                // Map your offers data here
+                <tr><td className="py-4 text-gray-400">#001</td><td className="py-4">Tomatoes</td><td className="py-4 text-lime-400">LIVE</td><td className="py-4 text-right"><button className="hover:text-lime-400">Edit</button></td></tr>
+              ) : (
+                // Map your farmers data here
+                <tr><td className="py-4 text-gray-400">SF-99</td><td className="py-4">Murang'a Sacco</td><td className="py-4 text-lime-400">VERIFIED</td><td className="py-4 text-right"><button className="hover:text-lime-400">Audit</button></td></tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

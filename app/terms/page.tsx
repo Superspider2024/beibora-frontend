@@ -1,13 +1,61 @@
+"use client";
+
 export default function Terms() {
   return (
-    <div className="min-h-screen bg-gray-50 p-8 text-gray-900 font-sans">
-      <div className="max-w-5xl mx-auto bg-white border border-gray-300 p-8 shadow-sm h-96 overflow-y-auto">
-        <h1 className="text-xl font-black tracking-tighter uppercase mb-4 sticky top-0 bg-white pb-2 border-b">Operating Agreement & Liability</h1>
-        <div className="text-xs font-mono text-gray-600 space-y-4">
-          <p><strong className="text-black">1. ESCROW & PAYMENTS:</strong> Funds are locked in escrow upon Unit dispatch. Platform releases funds to cooperative strictly upon Sargonne validation of physical delivery at the centralized drop-off point.</p>
-          <p><strong className="text-black">2. LTL LOGISTICS:</strong> Third-party logistics (3PL) liability terminates at the drop-off point. Last-mile physical distribution is the sole responsibility of the Sargonne and bundled buyers.</p>
-          <p><strong className="text-black">3. TAKE RATE:</strong> The platform applies a compounded transaction fee strictly on the total landed cost (Farm + 3PL + S-Comm). Attempting to bypass the terminal for direct trade results in immediate node termination.</p>
-          <p><strong className="text-black">4. SPOILAGE:</strong> Disputes regarding transit damage must include geotagged photographic evidence within 30 minutes of drop-off. Failure to do so defaults payment to the cooperative.</p>
+    <div className="min-h-screen bg-[#202124] p-6 md:p-12 text-gray-300 font-sans selection:bg-lime-400 selection:text-black">
+      <div className="max-w-4xl mx-auto bg-[#171717] border border-gray-800 shadow-2xl p-10">
+        
+        <header className="mb-10 border-b border-gray-800 pb-6">
+          <h1 className="text-3xl font-black tracking-tighter uppercase text-white mb-2">
+            Operating Agreement & Terms of Service
+          </h1>
+          <p className="text-xs font-mono text-lime-400 uppercase tracking-widest">
+            Last Updated: May 2026 | Beibora Agricultural Exchange
+          </p>
+        </header>
+
+        <div className="space-y-8 text-sm leading-relaxed font-mono">
+          
+          <section>
+            <h3 className="text-white font-bold uppercase mb-2">1. Scope of Agreement</h3>
+            <p>
+              By accessing the Beibora digital exchange, you (whether acting as an independent Sargonne node, a Mansart supply coordinator, or a registered buyer) enter into a binding legal agreement with Beibora. Our platform provides decentralized agricultural commodity routing, connecting rural cooperatives directly to urban market demand. You acknowledge that Beibora acts solely as an intermediary and marketplace facilitator, not as the physical owner of the produce traded.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-white font-bold uppercase mb-2">2. Compensation & Transaction Fee Structure</h3>
+            <p>
+              Beibora operates on a transparent "Compound Fee" model. A platform transaction fee of 8% is applied to the aggregated landed cost, which includes the farm-gate price, third-party logistics (3PL) transport fees, and any applicable commissions. This fee is non-negotiable and is automatically withheld upon the successful validation of delivery. Bypassing the Beibora terminal to conduct direct trades with linked cooperatives is a breach of service and will result in the immediate and permanent termination of your operator status.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-white font-bold uppercase mb-2">3. Logistics & Spoilage Liability</h3>
+            <p>
+              The movement of physical produce is handled by independent third-party logistics providers. Beibora mandates that all goods are inspected at the point of origin by a Mansart agent. However, transit delays, environmental factors, and mechanical failures inherent to informal Nairobi logistics are risks inherent to the trade. Liability for physical spoilage or transit damage transfers from the cooperative to the purchaser upon the Sargonne's confirmation of drop-off at the centralized terminal. Claims for transit-related losses must be substantiated by geotagged photographic evidence uploaded within 30 minutes of receipt.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-white font-bold uppercase mb-2">4. Payment Escrow Protocol</h3>
+            <p>
+              All payments are facilitated through our escrow system. When a buyer initiates an order, funds are verified. Upon the physical delivery and validation of the commodity by the regional Sargonne, the payment is released to the cooperative's designated accounts. Buyers who attempt to withhold payment post-validation will be blacklisted across all nodes. Similarly, cooperatives that fail to deliver quantities or qualities as described will face immediate suspension.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-white font-bold uppercase mb-2">5. Dispute Resolution</h3>
+            <p>
+              In the event of a dispute between a buyer and a cooperative regarding quality or weight, the local Sargonne acts as the primary arbitrator. Their assessment, supported by the digital logs and photographs submitted to the platform, is final. Beibora reserves the right to withhold payouts from the escrow account during the duration of any dispute investigation. By continuing to use the service, you agree to submit to this operational arbitration process and waive the right to seek damages beyond the transaction value.
+            </p>
+          </section>
+
+          <footer className="pt-10 mt-10 border-t border-gray-800 text-gray-500 text-xs">
+            <p>&copy; 2026 Beibora Agricultural Exchange. All rights reserved.</p>
+            <p>Registered Operations: Nairobi, Kenya. Dispatch: 0722721923</p>
+          </footer>
+
         </div>
       </div>
     </div>

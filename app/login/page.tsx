@@ -1,138 +1,76 @@
 "use client";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-import { useState } from "react";
-import Link from "next/link";
-import { Lock, Mail, Shield, Eye, EyeOff } from "lucide-react";
-import api from "../../lib/api";
-
-export default function LoginPage() {
-  const [role, setRole] = useState<"buyer" | "admin">("buyer");
+export default function Login() {
+  const router = useRouter();
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-
-    const formData = new FormData(e.currentTarget);
-    const payload: any = Object.fromEntries(formData.entries());
-    payload.role = role;
-
-    if (!validateEmail(String(payload.email || '')) ) {
-      setError('Please enter a valid email address');
-      setLoading(false);
-      return;
-    }
+    setError('');
 
     try {
-      const response = await api.post('/auth/login', payload);
-      localStorage.setItem('token', response.data.token);
-      // Redirect based on role
-      if (response.data.role === 'admin') {
-        window.location.href = '/admin';
+      const res = await fetch('https://beibora-production.up.railway.app/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Assume backend returns a token; store it
+        localStorage.setItem('beibora_token', data.token);
+        // Redirect to terminal
+        router.push('/marketplace');
       } else {
-        window.location.href = '/marketplace';
+        setError(data.message || 'Authentication failed.');
       }
-    } catch (err: any) {
-      setError(err.response?.data?.msg || 'Login failed');
+    } catch (err) {
+      setError('Connection to protocol failed.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-700">
+    <div className="min-h-screen bg-[#202124] flex items-center justify-center p-6 font-mono">
+      <div className="w-full max-w-sm bg-[#171717] border border-gray-800 p-8 shadow-2xl">
+        <h2 className="text-xl font-black text-white uppercase tracking-tighter mb-2">Terminal Access</h2>
+        <p className="text-[10px] text-gray-500 mb-8 uppercase tracking-widest">Authorized nodes only</p>
+        
+        {error && <p className="text-[10px] text-red-500 mb-4 uppercase">{error}</p>}
 
-        {/* Header */}
-        <div className="bg-[#1A3636] p-8 text-center text-white">
-          <h1 className="text-3xl font-black mb-2">Welcome Back</h1>
-          <p className="text-gray-300 text-sm">Access the Beibora Protocol</p>
-        </div>
-
-        {/* Role Toggle */}
-        <div className="p-6 bg-gray-750 border-b border-gray-700">
-          <div className="flex bg-gray-700 rounded-3xl p-2 gap-2">
-            <button
-              type="button"
-              onClick={() => setRole("buyer")}
-              className={`flex-1 py-3 px-4 rounded-2xl font-semibold transition-all text-sm ${
-                role === "buyer"
-                  ? "bg-[#32CD32] text-gray-900 shadow-sm"
-                  : "text-gray-300 hover:text-white"
-              }`}
-            >
-              Buyer
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole("admin")}
-              className={`flex-1 py-3 px-4 rounded-2xl font-semibold transition-all text-sm ${
-                role === "admin"
-                  ? "bg-[#32CD32] text-gray-900 shadow-sm"
-                  : "text-gray-300 hover:text-white"
-              }`}
-            >
-              Admin
-            </button>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
-          {error && <p className="text-red-400 text-center">{error}</p>}
-
-          <div className="relative">
-            <Mail className="absolute left-4 top-4 text-gray-400" size={20} />
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="Email"
-              className="w-full pl-12 pr-4 py-4 bg-gray-700 border border-gray-600 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-all text-white placeholder-gray-500"
-            />
-          </div>
-
-          <div className="relative">
-            <Lock className="absolute left-4 top-4 text-gray-400" size={20} />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              required
-              placeholder="Password"
-              className="w-full pr-12 pl-12 py-4 bg-gray-700 border border-gray-600 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-all text-white placeholder-gray-500"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 text-gray-400"
-              aria-label="Toggle password visibility"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-
-          <button
-            type="submit"
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input 
+            type="email" 
+            placeholder="Node Email" 
+            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
+            onChange={(e) => setCredentials({...credentials, email: e.target.value})}
+          />
+          <input 
+            type="password" 
+            placeholder="Passkey" 
+            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
+            onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+          />
+          <button 
             disabled={loading}
-            className="w-full bg-[#32CD32] text-white py-4 rounded-3xl font-bold text-lg hover:bg-[#28a428] transition-all disabled:bg-gray-600"
+            className="w-full bg-lime-400 text-black font-black py-3 uppercase tracking-widest hover:bg-lime-500 transition disabled:bg-gray-600 mt-4"
           >
-            {loading ? "Authenticating..." : "Login"}
+            {loading ? 'Authenticating...' : 'Connect Node'}
           </button>
         </form>
 
-        <div className="p-6 text-center border-t border-gray-700 bg-gray-800">
-          <p className="text-gray-400 font-medium">
-            New to Beibora? <Link href="/signup" className="text-[#32CD32] font-bold hover:underline">Sign up here</Link>
-          </p>
-        </div>
+        <p className="mt-6 text-[10px] text-gray-600 text-center uppercase tracking-widest">
+          Need access? <Link href="/signup" className="text-lime-400 hover:underline">Request Node ID</Link>
+        </p>
       </div>
-    </main>
+    </div>
   );
 }

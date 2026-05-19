@@ -1,219 +1,85 @@
 "use client";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-import { useState } from "react";
-import Link from "next/link";
-import { User, Shield, Phone, MapPin, Lock, Mail, Type, Eye, EyeOff } from "lucide-react";
-import api from "../../lib/api";
-
-export default function SignupPage() {
-  const [role, setRole] = useState<"buyer" | "admin">("buyer");
+export default function Signup() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'Sargonne' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const validatePhone = (phone: string) => {
-    // Expect local format starting with 07 and 10 digits total
-    return /^07\d{8}$/.test(phone);
-  };
-
-  const normalizePhone = (phone: string) => {
-    if (phone.startsWith('07')) return '+254' + phone.slice(1);
-    return phone;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-
-    const formData = new FormData(e.currentTarget);
-    const payload: any = Object.fromEntries(formData.entries());
-    payload.role = role;
-
-    // Client-side validation
-    if (!validateEmail(String(payload.email || ''))) {
-      setError('Please enter a valid email address');
-      setLoading(false);
-      return;
-    }
-    if (String(payload.password || '').length < 6) {
-      setError('Password must be at least 6 characters');
-      setLoading(false);
-      return;
-    }
-    if (!validatePhone(String(payload.number || ''))) {
-      setError('Phone must start with 07 and be 10 digits long');
-      setLoading(false);
-      return;
-    }
-
-    // Normalize phone to +254 format
-    payload.number = normalizePhone(String(payload.number));
+    setError('');
 
     try {
-      const response = await api.post('/auth/register', payload);
-      localStorage.setItem('token', response.data.token);
-      // Redirect based on role
-      if (role === 'admin') {
-        window.location.href = '/admin';
+      const res = await fetch('https://beibora-production.up.railway.app/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Success: Redirect to Marketplace
+        router.push('/marketplace');
       } else {
-        window.location.href = '/marketplace';
+        setError(data.message || 'Registration failed. Check Node ID.');
       }
-    } catch (err: any) {
-      setError(err.response?.data?.msg || 'Registration failed');
+    } catch (err) {
+      setError('Connection to backend failed. Check server status.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-black text-white mb-4">Join Beibora</h1>
-          <p className="text-gray-300 text-lg">Select your role</p>
-        </div>
+    <div className="min-h-screen bg-[#202124] flex items-center justify-center p-6 font-mono">
+      <div className="w-full max-w-sm bg-[#171717] border border-gray-800 p-8 shadow-2xl">
+        <h2 className="text-xl font-black text-white uppercase tracking-tighter mb-2">Initialize Node</h2>
+        <p className="text-[10px] text-gray-500 mb-8 uppercase tracking-widest">Connect to Beibora Protocol</p>
+        
+        {error && <p className="text-[10px] text-red-500 mb-4 uppercase">{error}</p>}
 
-        {/* Role Toggle */}
-        <div className="flex bg-gray-800 rounded-3xl p-2 mb-8 border border-gray-700">
-          <button
-            type="button"
-            onClick={() => setRole("buyer")}
-            className={`flex-1 py-4 px-6 rounded-2xl font-bold transition-all ${
-              role === "buyer"
-                ? "bg-[#1A3636] text-white shadow-sm"
-                : "text-gray-300 hover:text-white"
-            }`}
+        <form onSubmit={handleSignup} className="space-y-4">
+          <input 
+            type="text" placeholder="Full Name" 
+            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+          />
+          <input 
+            type="email" placeholder="Email / Identifier" 
+            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
+            onChange={(e) => setFormData({...formData, email: e.target.value})}
+          />
+          <input 
+            type="password" placeholder="Passkey" 
+            className="w-full bg-[#202124] text-white p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
+            onChange={(e) => setFormData({...formData, password: e.target.value})}
+          />
+          <select 
+            className="w-full bg-[#202124] text-gray-400 p-3 border border-gray-700 outline-none focus:border-lime-400 text-sm"
+            onChange={(e) => setFormData({...formData, role: e.target.value})}
           >
-            <div className="flex items-center justify-center">
-              <User size={20} className="mr-2" />
-              Buyer
-            </div>
-          </button>
-          <button
-            type="button"
-            onClick={() => setRole("admin")}
-            className={`flex-1 py-4 px-6 rounded-2xl font-bold transition-all ${
-              role === "admin"
-                ? "bg-[#1A3636] text-white shadow-sm"
-                : "text-gray-300 hover:text-white"
-            }`}
-          >
-            <div className="flex items-center justify-center">
-              <Shield size={20} className="mr-2" />
-              Admin
-            </div>
-          </button>
-        </div>
+            <option>Sargonne</option>
+            <option>Mansart</option>
+          </select>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="bg-red-900/20 border border-red-700 rounded-3xl p-4">
-              <p className="text-red-300 font-medium">{error}</p>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div className="relative">
-              <Type className="absolute left-4 top-4 text-gray-400" size={20} />
-              <input
-                type="text"
-                name="name"
-                required
-                placeholder="Full Name"
-                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-              />
-            </div>
-
-            <div className="relative">
-              <Mail className="absolute left-4 top-4 text-gray-400" size={20} />
-              <input
-                type="email"
-                name="email"
-                required
-                placeholder="Email"
-                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-              />
-            </div>
-
-            <div className="relative">
-              <Lock className="absolute left-4 top-4 text-gray-400" size={20} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                required
-                placeholder="Password"
-                className="w-full pr-12 pl-12 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-gray-400"
-                aria-label="Toggle password visibility"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-
-            <div className="relative">
-              <Phone className="absolute left-4 top-4 text-gray-400" size={20} />
-              <input
-                type="tel"
-                name="number"
-                required
-                placeholder="Phone Number"
-                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-              />
-            </div>
-
-            <div className="relative">
-              <MapPin className="absolute left-4 top-4 text-gray-400" size={20} />
-              <input
-                type="text"
-                name="location"
-                required
-                placeholder="Location"
-                className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-              />
-            </div>
-
-            {role === "admin" && (
-              <div className="relative">
-                <Shield className="absolute left-4 top-4 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  name="adminCode"
-                  required
-                  placeholder="Secret Admin Code"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-3xl focus:outline-none focus:border-[#32CD32] transition-colors font-medium text-white placeholder-gray-500"
-                />
-              </div>
-            )}
-          </div>
-
-          <button
-            type="submit"
+          <button 
             disabled={loading}
-            className="w-full bg-[#32CD32] text-white py-4 rounded-3xl font-bold hover:bg-[#28a428] transition-colors shadow-sm disabled:bg-gray-600 disabled:cursor-not-allowed"
+            className="w-full bg-lime-400 text-black font-black py-3 uppercase tracking-widest hover:bg-lime-500 transition disabled:bg-gray-600"
           >
-            {loading ? "Creating Account..." : `Join as ${role === "buyer" ? "Buyer" : "Admin"}`}
+            {loading ? 'Initializing...' : 'Register Node'}
           </button>
         </form>
 
-        <div className="text-center mt-8">
-          <p className="text-gray-400">
-            Already have an account?{" "}
-            <Link href="/login" className="text-[#32CD32] font-bold hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </div>
+        <p className="mt-6 text-[10px] text-gray-600 text-center uppercase tracking-widest">
+          Already have access? <Link href="/login" className="text-lime-400 hover:underline">Log in</Link>
+        </p>
       </div>
-    </main>
+    </div>
   );
 }
