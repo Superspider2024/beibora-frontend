@@ -8,10 +8,23 @@ export default function AdminTerminal() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const parseResponse = async (res: Response) => {
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        return res.json();
+      }
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { error: text || `${res.status} ${res.statusText}` };
+      }
+    };
+
     const fetchData = async () => {
       const token = typeof window !== 'undefined' ? localStorage.getItem('beibora_token') : null;
       if (!token) {
-        setError('Please log in to view admin data.');
+        setError('No auth token found. Please log in again with admin credentials.');
         setLoading(false);
         return;
       }
@@ -24,20 +37,26 @@ export default function AdminTerminal() {
           }),
         ]);
 
-        const offersData = await offersRes.json();
-        const farmersData = await farmersRes.json();
-
-        setData({
-          offers: offersRes.ok && Array.isArray(offersData) ? offersData : [],
-          farmers: farmersRes.ok && Array.isArray(farmersData) ? farmersData : [],
-        });
+        let offersData: any = [];
+        let farmersData: any = [];
 
         if (!offersRes.ok) {
-          setError(offersData.msg || offersData.message || 'Unable to load offer data.');
+          const parsed = await parseResponse(offersRes);
+          setError(parsed?.msg || parsed?.message || `Offers request failed: ${offersRes.status}`);
+        } else {
+          const parsed = await parseResponse(offersRes);
+          offersData = Array.isArray(parsed) ? parsed : [];
         }
+
         if (!farmersRes.ok) {
-          setError(farmersData.msg || farmersData.message || 'Unable to load farmer data.');
+          const parsed = await parseResponse(farmersRes);
+          setError(parsed?.msg || parsed?.message || `Farmers request failed: ${farmersRes.status}`);
+        } else {
+          const parsed = await parseResponse(farmersRes);
+          farmersData = Array.isArray(parsed) ? parsed : [];
         }
+
+        setData({ offers: offersData, farmers: farmersData });
       } catch (err) {
         console.error('Failed to sync with terminal backend', err);
         setError('Connection failed while loading admin data.');

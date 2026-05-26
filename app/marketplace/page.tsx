@@ -9,9 +9,28 @@ export default function TerminalCommandCenter() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const parseResponse = async (res: Response) => {
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        return res.json();
+      }
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { error: text || `${res.status} ${res.statusText}` };
+      }
+    };
+
     const fetchData = async () => {
       const token = typeof window !== 'undefined' ? localStorage.getItem('beibora_token') : null;
       const authHeaders: Record<string, string> | undefined = token ? { Authorization: `Bearer ${token}` } : undefined;
+
+      if (!token) {
+        setError('No auth token found. Please log in again.');
+        setLoading(false);
+        return;
+      }
 
       try {
         const [prodRes, orderRes] = await Promise.all([
@@ -21,22 +40,22 @@ export default function TerminalCommandCenter() {
           }),
         ]);
 
-        const prodData = await prodRes.json();
-        if (prodRes.ok && Array.isArray(prodData)) {
-          setProducts(prodData);
-        } else {
+        if (!prodRes.ok) {
+          const prodData = await parseResponse(prodRes);
+          setError(prodData?.msg || prodData?.message || `Product request failed: ${prodRes.status}`);
           setProducts([]);
-          setError('Unable to load marketplace products.');
+        } else {
+          const prodData = await parseResponse(prodRes);
+          setProducts(Array.isArray(prodData) ? prodData : []);
         }
 
-        const orderData = await orderRes.json();
-        if (orderRes.ok && Array.isArray(orderData)) {
-          setOrders(orderData);
-        } else {
+        if (!orderRes.ok) {
+          const orderData = await parseResponse(orderRes);
+          setError(orderData?.msg || orderData?.message || `Orders request failed: ${orderRes.status}`);
           setOrders([]);
-          if (!orderRes.ok) {
-            setError(orderData.msg || orderData.message || 'Unable to load your orders.');
-          }
+        } else {
+          const orderData = await parseResponse(orderRes);
+          setOrders(Array.isArray(orderData) ? orderData : []);
         }
       } catch (err) {
         console.error('Terminal Sync Error', err);
