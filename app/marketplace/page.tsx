@@ -11,7 +11,7 @@ export default function TerminalCommandCenter() {
   useEffect(() => {
     const fetchData = async () => {
       const token = typeof window !== 'undefined' ? localStorage.getItem('beibora_token') : null;
-      const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+      const authHeaders: Record<string, string> | undefined = token ? { Authorization: `Bearer ${token}` } : undefined;
 
       try {
         const [prodRes, orderRes] = await Promise.all([
