@@ -25,9 +25,11 @@ export default function Signup() {
       const data = await res.json();
 
       if (res.ok) {
+        localStorage.setItem('beibora_token', data.token);
+        if (data.role) localStorage.setItem('beibora_role', data.role);
         router.push('/marketplace');
       } else {
-        setError(data.msg || data.message || 'Registration failed.');
+        setError(data.msg || data.message || (data.errors ? JSON.stringify(data.errors) : 'Registration failed.'));
       }
     } catch (err) {
       setError('Connection to backend failed.');

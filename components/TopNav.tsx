@@ -9,23 +9,25 @@ export default function TopNav() {
   if (terminalRoutes.some(route => pathname?.startsWith(route))) return null;
 
   return (
-    <nav className="flex justify-between items-center p-6 bg-[#202124] border-b border-gray-800 w-full z-50">
-      <Link href="/" className="text-xl font-black tracking-tighter uppercase text-white hover:text-lime-400 transition-colors">
-        Beibora
-      </Link>
-      <div className="hidden md:flex gap-6 text-xs font-bold uppercase tracking-widest text-gray-400">
-        <Link href="/" className="hover:text-lime-400 transition-colors">Home</Link>
-        <Link href="/about" className="hover:text-lime-400 transition-colors">About</Link>
-        <Link href="/terms" className="hover:text-lime-400 transition-colors">Terms</Link>
-      </div>
-      <div className="flex gap-4">
-        <Link href="/login" className="text-xs font-bold uppercase tracking-widest text-white hover:text-lime-400 px-6 py-2 border border-gray-700 hover:border-lime-400 transition-colors">
-          Login
-        </Link>
-        <Link href="/signup" className="text-xs font-bold uppercase tracking-widest text-black bg-lime-400 hover:bg-lime-500 px-6 py-2 transition-colors shadow-[0_0_15px_rgba(163,230,53,0.2)]">
-          Sign Up
-        </Link>
-      </div>
-    </nav>
+    <nav className="flex justify-between items-center px-8 py-5 bg-white border-b border-gray-100 w-full z-50 sticky top-0">
+    <div className="text-2xl font-extrabold tracking-tight text-gray-900 cursor-pointer">
+      Beibora.
+    </div>
+    
+    <div className="hidden md:flex gap-8 text-sm font-medium text-gray-500">
+      <a href="#home" className="hover:text-black transition-colors">Home</a>
+      <a href="#about" className="hover:text-black transition-colors">About</a>
+      <a href="#terms" className="hover:text-black transition-colors">Terms</a>
+    </div>
+    
+    <div className="flex gap-4 items-center">
+      <a href="#login" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">
+        Log in
+      </a>
+      <a href="#signup" className="text-sm font-medium text-white bg-black hover:bg-gray-800 px-6 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg">
+        Sign up
+      </a>
+    </div>
+  </nav>
   );
 }
