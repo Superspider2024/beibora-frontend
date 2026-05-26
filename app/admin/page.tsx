@@ -5,20 +5,42 @@ export default function AdminTerminal() {
   const [activeTab, setActiveTab] = useState('offers');
   const [data, setData] = useState({ offers: [], farmers: [] });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch data from your Railway backend
     const fetchData = async () => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('beibora_token') : null;
+      if (!token) {
+        setError('Please log in to view admin data.');
+        setLoading(false);
+        return;
+      }
+
       try {
         const [offersRes, farmersRes] = await Promise.all([
           fetch('https://beibora-production.up.railway.app/api/products'),
-          fetch('https://beibora-production.up.railway.app/api/user/farmers')
+          fetch('https://beibora-production.up.railway.app/api/user/farmers', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
-        const offers = await offersRes.json();
-        const farmers = await farmersRes.json();
-        setData({ offers, farmers });
+
+        const offersData = await offersRes.json();
+        const farmersData = await farmersRes.json();
+
+        setData({
+          offers: offersRes.ok && Array.isArray(offersData) ? offersData : [],
+          farmers: farmersRes.ok && Array.isArray(farmersData) ? farmersData : [],
+        });
+
+        if (!offersRes.ok) {
+          setError(offersData.msg || offersData.message || 'Unable to load offer data.');
+        }
+        if (!farmersRes.ok) {
+          setError(farmersData.msg || farmersData.message || 'Unable to load farmer data.');
+        }
       } catch (err) {
-        console.error("Failed to sync with terminal backend");
+        console.error('Failed to sync with terminal backend', err);
+        setError('Connection failed while loading admin data.');
       } finally {
         setLoading(false);
       }
@@ -49,8 +71,14 @@ export default function AdminTerminal() {
         </button>
       </div>
 
+      {error && (
+        <div className="mb-6 rounded-3xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-950/70 dark:text-red-200">
+          {error}
+        </div>
+      )}
+
       {/* Content Area */}
-      <div className="bg-[#171717] border border-gray-800 p-6 shadow-2xl min-h-[400px]">
+      <div className="bg-[#171717] border border-gray-800 p-6 shadow-2xl min-h-[400px] rounded-3xl">
         {loading ? (
           <p className="text-xs text-lime-400 animate-pulse uppercase">Syncing with Protocol...</p>
         ) : (
@@ -65,11 +93,35 @@ export default function AdminTerminal() {
             </thead>
             <tbody className="divide-y divide-gray-800">
               {activeTab === 'offers' ? (
-                // Map your offers data here
-                <tr><td className="py-4 text-gray-400">#001</td><td className="py-4">Tomatoes</td><td className="py-4 text-lime-400">LIVE</td><td className="py-4 text-right"><button className="hover:text-lime-400">Edit</button></td></tr>
+                data.offers.length > 0 ? (
+                  data.offers.map((offer: any) => (
+                    <tr key={offer._id}>
+                      <td className="py-4 text-gray-400">{offer._id.slice(-6)}</td>
+                      <td className="py-4">{offer.name || offer.title || 'Item'}</td>
+                      <td className="py-4 text-lime-400">LIVE</td>
+                      <td className="py-4 text-right"><button className="hover:text-lime-400">Edit</button></td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-gray-400">No offers available yet.</td>
+                  </tr>
+                )
               ) : (
-                // Map your farmers data here
-                <tr><td className="py-4 text-gray-400">SF-99</td><td className="py-4">Murang'a Sacco</td><td className="py-4 text-lime-400">VERIFIED</td><td className="py-4 text-right"><button className="hover:text-lime-400">Audit</button></td></tr>
+                data.farmers.length > 0 ? (
+                  data.farmers.map((farmer: any) => (
+                    <tr key={farmer._id}>
+                      <td className="py-4 text-gray-400">{farmer._id.slice(-6)}</td>
+                      <td className="py-4">{farmer.name}</td>
+                      <td className="py-4 text-lime-400">VERIFIED</td>
+                      <td className="py-4 text-right"><button className="hover:text-lime-400">Audit</button></td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-gray-400">No farmers found yet.</td>
+                  </tr>
+                )
               )}
             </tbody>
           </table>

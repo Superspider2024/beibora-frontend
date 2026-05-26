@@ -35,7 +35,8 @@ export default function Signup() {
       if (res.ok) {
         localStorage.setItem('beibora_token', data.token);
         if (data.role) localStorage.setItem('beibora_role', data.role);
-        navigateAfterSignup('/marketplace');
+        const destination = data.role === 'admin' ? '/admin' : '/marketplace';
+        navigateAfterSignup(destination);
       } else {
         setError(data.msg || data.message || (data.errors ? JSON.stringify(data.errors) : 'Registration failed.'));
       }
