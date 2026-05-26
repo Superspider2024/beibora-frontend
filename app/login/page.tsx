@@ -9,6 +9,14 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const navigateAfterLogin = (path: string) => {
+    if (typeof window !== 'undefined') {
+      window.location.href = path;
+      return;
+    }
+    router.push(path);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -27,11 +35,11 @@ export default function Login() {
         localStorage.setItem('beibora_token', data.token);
         if (data.role) localStorage.setItem('beibora_role', data.role);
 
-        const userRole = data.role || data.user?.role || 'buyer';
-        if (userRole.toLowerCase() === 'admin') {
-          router.push('/admin');
+        const userRole = String(data.role || data.user?.role || 'buyer').toLowerCase();
+        if (userRole === 'admin') {
+          navigateAfterLogin('/admin');
         } else {
-          router.push('/marketplace');
+          navigateAfterLogin('/marketplace');
         }
       } else {
         setError(data.msg || data.message || (data.errors ? JSON.stringify(data.errors) : 'Authentication failed.'));
@@ -59,6 +67,7 @@ export default function Login() {
                 <input
                   type="email"
                   placeholder="name@example.com"
+                  value={credentials.email}
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all text-sm placeholder:text-gray-400"
                   onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                   required
@@ -70,6 +79,7 @@ export default function Login() {
                 <input
                   type="password"
                   placeholder="••••••••"
+                  value={credentials.password}
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all text-sm placeholder:text-gray-400"
                   onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                   required

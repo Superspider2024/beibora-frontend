@@ -10,6 +10,14 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigateAfterSignup = (path: string) => {
+    if (typeof window !== 'undefined') {
+      window.location.href = path;
+      return;
+    }
+    router.push(path);
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -27,7 +35,7 @@ export default function Signup() {
       if (res.ok) {
         localStorage.setItem('beibora_token', data.token);
         if (data.role) localStorage.setItem('beibora_role', data.role);
-        router.push('/marketplace');
+        navigateAfterSignup('/marketplace');
       } else {
         setError(data.msg || data.message || (data.errors ? JSON.stringify(data.errors) : 'Registration failed.'));
       }
