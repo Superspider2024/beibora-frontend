@@ -35,6 +35,10 @@ export default function Signup() {
       if (res.ok) {
         localStorage.setItem('beibora_token', data.token);
         if (data.role) localStorage.setItem('beibora_role', data.role);
+        if (typeof window !== 'undefined') {
+          document.cookie = `beibora_token=${encodeURIComponent(data.token)}; path=/; max-age=3600; sameSite=lax`;
+          if (data.role) document.cookie = `beibora_role=${encodeURIComponent(data.role)}; path=/; max-age=3600; sameSite=lax`;
+        }
         const destination = data.role === 'admin' ? '/admin' : '/marketplace';
         navigateAfterSignup(destination);
       } else {
