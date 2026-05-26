@@ -6,6 +6,11 @@ export default function AdminTerminal() {
   const [data, setData] = useState<{ offers: any[]; farmers: any[] }>({ offers: [], farmers: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [farmerForm, setFarmerForm] = useState({ name: '', email: '', number: '', location: '' });
+  const [productForm, setProductForm] = useState({ farmerId: '', name: '', pricePerUnit: '', stock: '', unit: 'kg', location: '', description: '' });
+  const [farmersLoading, setFarmersLoading] = useState(false);
+  const [productMsg, setProductMsg] = useState('');
+  const [farmerMsg, setFarmerMsg] = useState('');
 
   useEffect(() => {
     const parseResponse = async (res: Response) => {
@@ -95,6 +100,93 @@ export default function AdminTerminal() {
           {error}
         </div>
       )}
+
+      {/* Admin quick actions: create farmer + add product */}
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setFarmersLoading(true);
+            setFarmerMsg('');
+            setError('');
+            try {
+              const token = typeof window !== 'undefined' ? localStorage.getItem('beibora_token') : null;
+              if (!token) throw new Error('No auth token');
+              const res = await fetch('https://beibora-production.up.railway.app/api/user/farmers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify(farmerForm),
+              });
+              const dataRes = await res.json();
+              if (res.ok) {
+                setFarmerMsg('Farmer created');
+                setData((d) => ({ ...d, farmers: [dataRes, ...d.farmers] }));
+                setFarmerForm({ name: '', email: '', number: '', location: '' });
+              } else {
+                setError(dataRes.msg || dataRes.message || 'Failed to create farmer');
+              }
+            } catch (err: any) {
+              setError(err.message || 'Network error');
+            } finally {
+              setFarmersLoading(false);
+            }
+          }}
+          className="p-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800"
+        >
+          <h3 className="text-sm font-semibold mb-3">Create Farmer (Sacco)</h3>
+          {farmerMsg && <div className="text-sm text-lime-400 mb-2">{farmerMsg}</div>}
+          <input value={farmerForm.name} onChange={(e) => setFarmerForm({ ...farmerForm, name: e.target.value })} required placeholder="Full name" className="w-full p-2 mb-2 rounded border" />
+          <input value={farmerForm.email} onChange={(e) => setFarmerForm({ ...farmerForm, email: e.target.value })} required placeholder="Email" className="w-full p-2 mb-2 rounded border" />
+          <input value={farmerForm.number} onChange={(e) => setFarmerForm({ ...farmerForm, number: e.target.value })} required placeholder="Phone" className="w-full p-2 mb-2 rounded border" />
+          <input value={farmerForm.location} onChange={(e) => setFarmerForm({ ...farmerForm, location: e.target.value })} required placeholder="Location" className="w-full p-2 mb-3 rounded border" />
+          <button disabled={farmersLoading} className="px-4 py-2 bg-lime-500 text-black rounded">{farmersLoading ? 'Creating...' : 'Create Farmer'}</button>
+        </form>
+
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setProductMsg('');
+            setError('');
+            try {
+              const token = typeof window !== 'undefined' ? localStorage.getItem('beibora_token') : null;
+              if (!token) throw new Error('No auth token');
+              const payload = { ...productForm, pricePerUnit: Number(productForm.pricePerUnit), stock: Number(productForm.stock) };
+              const res = await fetch('https://beibora-production.up.railway.app/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify(payload),
+              });
+              const dataRes = await res.json();
+              if (res.ok) {
+                setProductMsg('Product added');
+                setData((d) => ({ ...d, offers: [dataRes, ...d.offers] }));
+                setProductForm({ farmerId: '', name: '', pricePerUnit: '', stock: '', unit: 'kg', location: '', description: '' });
+              } else {
+                setError(dataRes.msg || dataRes.message || 'Failed to add product');
+              }
+            } catch (err: any) {
+              setError(err.message || 'Network error');
+            }
+          }}
+          className="p-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800"
+        >
+          <h3 className="text-sm font-semibold mb-3">Add Product for Farmer</h3>
+          {productMsg && <div className="text-sm text-lime-400 mb-2">{productMsg}</div>}
+          <select value={productForm.farmerId} onChange={(e) => setProductForm({ ...productForm, farmerId: e.target.value })} required className="w-full p-2 mb-2 rounded border">
+            <option value="">Select farmer</option>
+            {data.farmers.map((f: any) => <option key={f._id} value={f._id}>{f.name} — {f.location}</option>)}
+          </select>
+          <input value={productForm.name} onChange={(e) => setProductForm({ ...productForm, name: e.target.value })} required placeholder="Product name" className="w-full p-2 mb-2 rounded border" />
+          <div className="flex gap-2">
+            <input value={productForm.pricePerUnit} onChange={(e) => setProductForm({ ...productForm, pricePerUnit: e.target.value })} required placeholder="Price" className="w-1/2 p-2 mb-2 rounded border" />
+            <input value={productForm.stock} onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })} required placeholder="Stock" className="w-1/2 p-2 mb-2 rounded border" />
+          </div>
+          <input value={productForm.unit} onChange={(e) => setProductForm({ ...productForm, unit: e.target.value })} placeholder="Unit (kg)" className="w-full p-2 mb-2 rounded border" />
+          <input value={productForm.location} onChange={(e) => setProductForm({ ...productForm, location: e.target.value })} placeholder="Product location" className="w-full p-2 mb-2 rounded border" />
+          <input value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} placeholder="Description (optional)" className="w-full p-2 mb-3 rounded border" />
+          <button type="submit" className="px-4 py-2 bg-black text-white rounded">Add product</button>
+        </form>
+      </div>
 
       {/* Content Area */}
       <div className="bg-[#171717] border border-gray-800 p-6 shadow-2xl min-h-[400px] rounded-3xl">
