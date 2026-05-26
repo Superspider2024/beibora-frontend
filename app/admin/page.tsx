@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 export default function AdminTerminal() {
   const [activeTab, setActiveTab] = useState('offers');
-  const [data, setData] = useState({ offers: [], farmers: [] });
+  const [data, setData] = useState<{ offers: any[]; farmers: any[] }>({ offers: [], farmers: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
